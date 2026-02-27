@@ -1,1 +1,0 @@
-# pyrulecheck-test
