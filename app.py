@@ -10,7 +10,47 @@ def login(username, password):
     cursor = conn.cursor()
 
     # SQL Injection vulnerability
-    query = "SELECT * FROM users WHERE username = '" + username + "' AND password = '" + password + "'"
+    import os
+
+    # Original: API_KEY = "supersecretkey123"
+
+    # Fix: Load from environment variable at runtime
+    API_KEY = os.getenv("MY_API_KEY")
+    if not API_KEY:
+        raise ValueError("MY_API_KEY environment variable not set")
+
+import ast
+
+
+# Original (unsafe example):
+
+# user_input = "__import__('os').system('rm -rf /')"
+
+# result = eval(user_input)
+
+
+# Fix: For safely evaluating Python literals (lists, dicts, numbers, etc.)
+
+data_string = "[1, 'hello', {'key': 'value'}]"
+
+try:
+
+    parsed_data = ast.literal_eval(data_string)
+
+    print(f"Safely parsed data: {parsed_data}")
+
+except (ValueError, SyntaxError) as e:
+
+    print(f"Error parsing data: {e}. Input was not a valid literal structure.")
+
+
+# For complex dynamic code execution, a complete re-architecture is usually required.
+
+# Never use eval() with untrusted input.
+    # Use API_KEY in your application logic securely
+    def call_external_service():
+        print(f"Calling service with API Key: {API_KEY[:4]}...") # Displaying only prefix for security logging
+        # ... actual API call using API_KEY
     cursor.execute(query)
 
     return cursor.fetchone()
