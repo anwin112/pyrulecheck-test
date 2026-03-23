@@ -10,10 +10,35 @@ def login(username, password):
     cursor = conn.cursor()
 
     # SQL Injection vulnerability
-    query = "SELECT * FROM users WHERE username = '" + username + "' AND password = '" + password + "'"
+    import os
+
+    # Instead of: api_key = "my_hardcoded_secret_123"
+    API_KEY = os.environ.get("MY_API_KEY")
+    if not API_KEY:
+        raise ValueError("Environment variable MY_API_KEY not set. Please configure it.")
     cursor.execute(query)
 
-    return cursor.fetchone()
+    import ast
+    import json
+
+    user_input = "{'name': 'Alice', 'age': 30}" # Example string that might be user-controlled
+
+    # Safer alternative for evaluating Python literal structures (e.g., dicts, lists)
+    try:
+        data = ast.literal_eval(user_input)
+        # Process 'data' safely, e.g., data['name']
+    except (ValueError, SyntaxError) as e:
+        print(f"Error evaluating input as literal: {e}")
+        # Handle error appropriately (e.g., return 400 Bad Request)
+
+    # If input is expected to be JSON, use json.loads
+    # user_input_json = '{"product": "Laptop", "price": 1200}'
+    # try:
+    #     data = json.loads(user_input_json)
+    #     # Process 'data' safely
+    # except json.JSONDecodeError as e:
+    #     print(f"Error decoding JSON input: {e}")
+    #     # Handle error appropriately
 
 
 def execute_code(user_input):
