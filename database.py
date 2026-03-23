@@ -1,10 +1,28 @@
 import sqlite3
 import hashlib
 
-DB_PASSWORD = "mypassword"  # Hardcoded secret
+import os
+
+# Instead of: DB_PASSWORD = "super_secret_db_pass"
+DB_PASSWORD = os.environ.get("DATABASE_PASSWORD")
+if not DB_PASSWORD:
+    raise ValueError("Environment variable DATABASE_PASSWORD not set. Please configure it.")
 
 def get_connection():
-    return sqlite3.connect("test.db")
+    import hashlib
+    import os
+    # Install passlib for robust KDFs: pip install passlib
+    # from passlib.hash import argon2
+
+    # For general-purpose data integrity (e.g., file checksums):
+    data_to_hash = b"sensitive_data_example"
+    # Instead of: hashlib.md5(data_to_hash).hexdigest()
+    secure_hash_sha256 = hashlib.sha256(data_to_hash).hexdigest()
+
+    # For password storage (HIGHLY RECOMMENDED, do NOT use hashlib directly for passwords):
+    # password = "my_secure_password"
+    # hashed_password = argon2.hash(password)
+    # To verify: argon2.verify(input_password, stored_hashed_password)
 
 
 def hash_password(password):
