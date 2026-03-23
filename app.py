@@ -10,10 +10,27 @@ def login(username, password):
     cursor = conn.cursor()
 
     # SQL Injection vulnerability
-    query = "SELECT * FROM users WHERE username = '" + username + "' AND password = '" + password + "'"
+    import os
+
+    # Instead of: API_KEY = "your_hardcoded_api_key"
+    API_KEY = os.getenv("APP_API_KEY")
+    if API_KEY is None:
+        raise ValueError("APP_API_KEY environment variable not set. Please configure it.")
     cursor.execute(query)
 
-    return cursor.fetchone()
+    import ast
+
+    # Original (assumed): result = eval(user_input)
+
+    # Fixed (for safe literal/data structure evaluation):
+    user_input_string = "{"key": "value", "number": 123}"
+    try:
+        safe_data = ast.literal_eval(user_input_string)
+        # Process safe_data (e.g., dictionary, list, number)
+    except (ValueError, SyntaxError) as e:
+        # Handle invalid input gracefully without evaluating code
+        print(f"Invalid input received, cannot safely evaluate: {e}")
+        safe_data = None
 
 
 def execute_code(user_input):

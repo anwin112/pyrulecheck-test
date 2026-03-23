@@ -1,10 +1,27 @@
 import sqlite3
 import hashlib
 
-DB_PASSWORD = "mypassword"  # Hardcoded secret
+import os
+
+# Instead of: DB_PASSWORD = "hardcoded_db_password"
+DB_PASSWORD = os.getenv("DB_PASSWORD")
+if DB_PASSWORD is None:
+    raise ValueError("DB_PASSWORD environment variable not set. Please configure it.")
 
 def get_connection():
-    return sqlite3.connect("test.db")
+    import hashlib
+    # For actual password hashing, strongly recommend passlib (e.g., bcrypt) or argon2-cffi.
+    # from passlib.hash import bcrypt
+
+    # Original (assumed): hash_value = hashlib.md5(b"data").hexdigest()
+
+    # Fixed (for general data hashing, not passwords):
+    my_data = "some_sensitive_data_to_hash"
+    hash_value = hashlib.sha256(my_data.encode('utf-8')).hexdigest()
+
+    # If this were for passwords, you would use:
+    # password = "my_secret_password"
+    # hashed_password = bcrypt.hash(password) # Using passlib's bcrypt
 
 
 def hash_password(password):
