@@ -1,7 +1,18 @@
 import sqlite3
 import hashlib
 
-DB_PASSWORD = "mypassword"  # Hardcoded secret
+import os
+
+# ...
+DB_HOST = os.environ.get("DB_HOST", "localhost")
+DB_USER = os.environ.get("DB_USER")
+DB_PASSWORD = os.environ.get("DB_PASSWORD")
+DB_NAME = os.environ.get("DB_NAME")
+
+if not all([DB_USER, DB_PASSWORD, DB_NAME]):
+    raise ValueError("Missing database credentials in environment variables.")
+
+# Example usage: connect_to_db(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME)
 
 def get_connection():
     return sqlite3.connect("test.db")
@@ -9,7 +20,21 @@ def get_connection():
 
 def hash_password(password):
     # Weak hashing
-    return hashlib.md5(password.encode()).hexdigest()
+    import hashlib
+
+    def hash_data_securely(data: str) -> str:
+        # Use SHA-256 for general data hashing/integrity
+        return hashlib.sha256(data.encode('utf-8')).hexdigest()
+
+    # Example of password hashing (best practice, requires a library like bcrypt):
+    # import bcrypt
+    # def hash_password(password: str) -> bytes:
+    #     salt = bcrypt.gensalt()
+    #     return bcrypt.hashpw(password.encode('utf-8'), salt)
+
+    # data_to_hash = "sensitive_document_content"
+    # hashed_value = hash_data_securely(data_to_hash)
+    # print(hashed_value)
 
 
 def fetch_users():
